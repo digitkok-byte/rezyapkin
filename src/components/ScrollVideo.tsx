@@ -91,6 +91,51 @@ export default function ScrollVideo() {
 
       {/* Text overlays */}
       <TextLayer progress={progress} />
+
+      {/* Scroll hint arrow — right side, fades out on scroll */}
+      <ScrollHint progress={progress} />
+    </div>
+  );
+}
+
+/* ── Blinking double arrow on the right ── */
+function ScrollHint({ progress }: { progress: number }) {
+  // Fade out once user starts scrolling
+  const opacity = progress < 0.05 ? 1 : Math.max(0, 1 - (progress - 0.05) / 0.1);
+
+  if (opacity <= 0) return null;
+
+  return (
+    <div
+      className="fixed right-4 md:right-8 top-1/2 -translate-y-1/2 z-20 flex flex-col items-center gap-1 animate-pulse"
+      style={{ opacity }}
+    >
+      {/* Up arrow */}
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="white"
+        strokeWidth="1"
+        className="opacity-40"
+      >
+        <path d="M18 15l-6-6-6 6" />
+      </svg>
+      {/* Thin line */}
+      <div className="w-px h-8 bg-white/20" />
+      {/* Down arrow */}
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="white"
+        strokeWidth="1"
+        className="opacity-40"
+      >
+        <path d="M6 9l6 6 6-6" />
+      </svg>
     </div>
   );
 }
