@@ -19,8 +19,22 @@ export default function ScrollVideo() {
       setReady(true);
     };
 
+    // Try multiple events for cross-browser compatibility
+    if (video.readyState >= 2) {
+      onReady();
+      return;
+    }
+
     video.addEventListener("loadeddata", onReady);
-    return () => video.removeEventListener("loadeddata", onReady);
+    video.addEventListener("canplay", onReady);
+
+    // Force load
+    video.load();
+
+    return () => {
+      video.removeEventListener("loadeddata", onReady);
+      video.removeEventListener("canplay", onReady);
+    };
   }, []);
 
   useEffect(() => {
