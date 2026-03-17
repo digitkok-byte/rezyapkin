@@ -1,77 +1,37 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
-
-const TOTAL_FRAMES = 122;
-
-function getFramePath(index: number): string {
-  const num = String(index).padStart(4, "0");
-  return `/frames/frame_${num}.jpg`;
-}
+import { useEffect, useRef, useState } from "react";
 
 export default function ScrollVideo() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const imagesRef = useRef<HTMLImageElement[]>([]);
-  const [loaded, setLoaded] = useState(false);
   const [progress, setProgress] = useState(0);
-  const frameIndexRef = useRef(0);
+  const [ready, setReady] = useState(false);
   const rafRef = useRef<number>(0);
 
-  // Preload all frames
   useEffect(() => {
-    let loadedCount = 0;
-    const images: HTMLImageElement[] = [];
+    const video = videoRef.current;
+    if (!video) return;
 
-    for (let i = 1; i <= TOTAL_FRAMES; i++) {
-      const img = new Image();
-      img.src = getFramePath(i);
-      img.onload = () => {
-        loadedCount++;
-        if (loadedCount === TOTAL_FRAMES) {
-          imagesRef.current = images;
-          setLoaded(true);
-        }
-      };
-      images.push(img);
-    }
+    const onReady = () => {
+      video.pause();
+      video.currentTime = 0;
+      setReady(true);
+    };
+
+    video.addEventListener("loadeddata", onReady);
+    return () => video.removeEventListener("loadeddata", onReady);
   }, []);
 
-  // Draw frame on canvas
-  const drawFrame = useCallback(
-    (index: number) => {
-      const canvas = canvasRef.current;
-      const ctx = canvas?.getContext("2d");
-      const img = imagesRef.current[index];
-      if (!canvas || !ctx || !img) return;
-
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-
-      // Cover mode - fill entire viewport
-      const scale = Math.max(
-        canvas.width / img.naturalWidth,
-        canvas.height / img.naturalHeight
-      );
-      const w = img.naturalWidth * scale;
-      const h = img.naturalHeight * scale;
-      const x = (canvas.width - w) / 2;
-      const y = (canvas.height - h) / 2;
-
-      ctx.drawImage(img, x, y, w, h);
-    },
-    []
-  );
-
-  // Scroll handler
   useEffect(() => {
-    if (!loaded) return;
+    if (!ready) return;
 
     const handleScroll = () => {
       cancelAnimationFrame(rafRef.current);
       rafRef.current = requestAnimationFrame(() => {
         const container = containerRef.current;
-        if (!container) return;
+        const video = videoRef.current;
+        if (!container || !video) return;
 
         const rect = container.getBoundingClientRect();
         const scrollableHeight = container.scrollHeight - window.innerHeight;
@@ -79,46 +39,32 @@ export default function ScrollVideo() {
         const fraction = Math.max(0, Math.min(1, scrolled / scrollableHeight));
 
         setProgress(fraction);
-
-        const frameIndex = Math.min(
-          Math.floor(fraction * (TOTAL_FRAMES - 1)),
-          TOTAL_FRAMES - 1
-        );
-
-        if (frameIndex !== frameIndexRef.current) {
-          frameIndexRef.current = frameIndex;
-          drawFrame(frameIndex);
-        }
+        video.currentTime = fraction * video.duration;
       });
     };
 
-    // Draw first frame
-    drawFrame(0);
-
     window.addEventListener("scroll", handleScroll, { passive: true });
-    window.addEventListener("resize", () => drawFrame(frameIndexRef.current));
-
     return () => {
       window.removeEventListener("scroll", handleScroll);
       cancelAnimationFrame(rafRef.current);
     };
-  }, [loaded, drawFrame]);
+  }, [ready]);
 
   return (
-    <div
-      ref={containerRef}
-      className="relative"
-      style={{ height: "600vh" }}
-    >
-      {/* Fixed canvas */}
-      <canvas
-        ref={canvasRef}
-        className="fixed inset-0 w-full h-full"
+    <div ref={containerRef} className="relative" style={{ height: "600vh" }}>
+      {/* Video background */}
+      <video
+        ref={videoRef}
+        src="/video.mp4"
+        muted
+        playsInline
+        preload="auto"
+        className="fixed inset-0 w-full h-full object-cover"
         style={{ zIndex: 0 }}
       />
 
-      {/* Loading screen */}
-      {!loaded && (
+      {/* Loading */}
+      {!ready && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black">
           <div className="flex flex-col items-center gap-4">
             <div className="w-12 h-12 border border-white/20 border-t-white/80 rounded-full animate-spin" />
@@ -129,7 +75,7 @@ export default function ScrollVideo() {
         </div>
       )}
 
-      {/* Text overlays — appear proportionally to scroll */}
+      {/* Text overlays */}
       <TextLayer progress={progress} />
     </div>
   );
