@@ -100,39 +100,45 @@ export default function ScrollVideo() {
 
 /* ── Blinking double arrow on the right ── */
 function ScrollHint({ progress }: { progress: number }) {
-  // Fade out once user starts scrolling
   const opacity = progress < 0.05 ? 1 : Math.max(0, 1 - (progress - 0.05) / 0.1);
 
   if (opacity <= 0) return null;
 
   return (
     <div
-      className="fixed right-4 md:right-8 top-1/2 -translate-y-1/2 z-20 flex flex-col items-center gap-1 animate-pulse"
-      style={{ opacity }}
+      className="fixed right-6 md:right-10 top-1/2 -translate-y-1/2 z-20 flex flex-col items-center gap-2"
+      style={{
+        opacity,
+        animation: "blink 2s ease-in-out infinite",
+      }}
     >
+      <style>{`
+        @keyframes blink {
+          0%, 100% { opacity: 0.2; }
+          50% { opacity: 0.8; }
+        }
+      `}</style>
       {/* Up arrow */}
       <svg
-        width="16"
-        height="16"
+        width="24"
+        height="24"
         viewBox="0 0 24 24"
         fill="none"
         stroke="white"
-        strokeWidth="1"
-        className="opacity-40"
+        strokeWidth="0.8"
       >
         <path d="M18 15l-6-6-6 6" />
       </svg>
       {/* Thin line */}
-      <div className="w-px h-8 bg-white/20" />
+      <div className="w-px h-12 bg-white/50" />
       {/* Down arrow */}
       <svg
-        width="16"
-        height="16"
+        width="24"
+        height="24"
         viewBox="0 0 24 24"
         fill="none"
         stroke="white"
-        strokeWidth="1"
-        className="opacity-40"
+        strokeWidth="0.8"
       >
         <path d="M6 9l6 6 6-6" />
       </svg>
