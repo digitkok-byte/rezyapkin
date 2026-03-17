@@ -95,68 +95,56 @@ export default function ScrollVideo() {
   );
 }
 
-/* ── Text animations synced to scroll ── */
+/* ── Text: rises from bottom, stays in place ── */
 function TextLayer({ progress }: { progress: number }) {
+  // Each text appears at 'start', rises to its final 'target' position by 'peak', and stays
   const sections = [
-    { text: "REZYAPKIN", start: 0.05, peak: 0.15, end: 0.35, position: "top" as const },
-    { text: ".", start: 0.30, peak: 0.40, end: 0.55, position: "center" as const },
-    { text: "creative", start: 0.45, peak: 0.55, end: 0.70, position: "center" as const },
-    { text: "technology", start: 0.55, peak: 0.65, end: 0.80, position: "center" as const },
-    { text: "AI dev", start: 0.75, peak: 0.85, end: 1.0, position: "bottom" as const },
+    { text: "REZYAPKIN", start: 0.02, peak: 0.14, targetTop: "15vh" },
+    { text: ".", start: 0.18, peak: 0.30, targetTop: "38vh" },
+    { text: "creative", start: 0.34, peak: 0.46, targetTop: "48vh" },
+    { text: "technology", start: 0.50, peak: 0.62, targetTop: "58vh" },
+    { text: "AI dev", start: 0.66, peak: 0.80, targetTop: "78vh" },
   ];
 
   return (
     <div className="fixed inset-0 z-10 pointer-events-none">
       {sections.map((section, i) => {
         let opacity = 0;
-        let translateY = 40;
-        let scale = 0.96;
+        let yOffset = 100; // starts 100vh below (off-screen bottom)
 
-        if (progress >= section.start && progress <= section.end) {
+        if (progress >= section.start) {
           if (progress <= section.peak) {
+            // Rising from bottom to target position
             const t = (progress - section.start) / (section.peak - section.start);
             opacity = t;
-            translateY = 40 * (1 - t);
-            scale = 0.96 + 0.04 * t;
+            yOffset = 100 * (1 - t); // 100 → 0 (vh offset from target)
           } else {
-            if (i === sections.length - 1) {
-              opacity = 1;
-              translateY = 0;
-              scale = 1;
-            } else {
-              const t = (progress - section.peak) / (section.end - section.peak);
-              opacity = 1 - t;
-              translateY = -30 * t;
-              scale = 1 + 0.03 * t;
-            }
+            // Stays in place
+            opacity = 1;
+            yOffset = 0;
           }
         }
 
-        const isTitle = section.position === "top";
-        const isAiDev = section.position === "bottom";
+        const isTitle = i === 0;
+        const isAiDev = i === sections.length - 1;
         const isDot = section.text === ".";
-
-        const positionClass = isTitle
-          ? "top-[12vh] md:top-[10vh] left-0 right-0 flex justify-center"
-          : isAiDev
-          ? "bottom-[12vh] md:bottom-[10vh] left-0 right-0 flex justify-center"
-          : "inset-0 flex items-center justify-center";
 
         return (
           <div
             key={i}
-            className={`absolute ${positionClass}`}
+            className="absolute left-0 right-0 flex justify-center"
             style={{
+              top: section.targetTop,
               opacity,
-              transform: `translateY(${translateY}px) scale(${scale})`,
+              transform: `translateY(${yOffset}vh)`,
             }}
           >
             <span
               className={`
-                ${isTitle ? "text-5xl md:text-8xl lg:text-9xl tracking-[0.15em] md:tracking-[0.2em]" : ""}
-                ${isAiDev ? "text-5xl md:text-8xl lg:text-9xl tracking-[0.1em] md:tracking-[0.15em]" : ""}
-                ${isDot ? "text-7xl md:text-9xl" : ""}
-                ${!isTitle && !isAiDev && !isDot ? "text-2xl md:text-5xl lg:text-6xl tracking-[0.1em] md:tracking-[0.15em]" : ""}
+                ${isTitle ? "text-6xl md:text-9xl lg:text-[10rem] tracking-[0.15em] md:tracking-[0.2em]" : ""}
+                ${isAiDev ? "text-6xl md:text-9xl lg:text-[10rem] tracking-[0.1em] md:tracking-[0.15em]" : ""}
+                ${isDot ? "text-8xl md:text-[10rem]" : ""}
+                ${!isTitle && !isAiDev && !isDot ? "text-3xl md:text-6xl lg:text-8xl tracking-[0.1em] md:tracking-[0.15em]" : ""}
                 font-[100] text-white
               `}
               style={{
