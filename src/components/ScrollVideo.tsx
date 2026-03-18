@@ -154,11 +154,31 @@ function TextLayer({ progress }: { progress: number }) {
     { text: ".", start: 0.18, peak: 0.30, targetTop: "38vh" },
     { text: "creative", start: 0.34, peak: 0.46, targetTop: "48vh" },
     { text: "technology", start: 0.50, peak: 0.62, targetTop: "58vh" },
-    { text: "AI dev", start: 0.66, peak: 0.80, targetTop: "78vh" },
+    { text: "AI dev", start: 0.66, peak: 0.80, targetTop: "72vh" },
   ];
+
+  // Contact info — appears at the very end
+  const contactOpacity = progress >= 0.85 ? Math.min(1, (progress - 0.85) / 0.1) : 0;
 
   return (
     <div className="fixed inset-0 z-10 pointer-events-none">
+      {/* Contact info — bottom center */}
+      <div
+        className="absolute bottom-6 md:bottom-10 left-0 right-0 flex flex-col items-center gap-2 pointer-events-auto"
+        style={{
+          opacity: contactOpacity,
+          transform: `translateY(${(1 - contactOpacity) * 20}px)`,
+          transition: "transform 0.3s ease-out",
+        }}
+      >
+        <a href="tel:+79689774477" className="text-white/70 text-sm md:text-base font-[200] tracking-[0.15em] hover:text-white transition-colors">
+          +7 968 977-44-77
+        </a>
+        <a href="https://t.me/Digitkok" className="text-white/50 text-xs md:text-sm font-[200] tracking-[0.2em] hover:text-white transition-colors">
+          @Digitkok
+        </a>
+      </div>
+
       {sections.map((section, i) => {
         let opacity = 0;
         let yOffset = 100; // starts 100vh below (off-screen bottom)
