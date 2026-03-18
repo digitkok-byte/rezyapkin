@@ -150,17 +150,17 @@ function ScrollHint({ progress }: { progress: number }) {
 function TextLayer({ progress }: { progress: number }) {
   // Each text appears at 'start', rises to its final 'target' position by 'peak', and stays
   const sections = [
-    { text: "REZYAPKIN", start: 0.02, peak: 0.08, targetTop: "12vh", size: "hero" },
-    { text: ".", start: 0.10, peak: 0.14, targetTop: "28vh", size: "dot" },
-    { text: "creative", start: 0.16, peak: 0.22, targetTop: "36vh", size: "medium" },
-    { text: "technology", start: 0.24, peak: 0.30, targetTop: "44vh", size: "medium" },
-    { text: "AI dev", start: 0.32, peak: 0.38, targetTop: "52vh", size: "hero" },
-    // Services
-    { text: "scroll-driven animation", start: 0.42, peak: 0.48, targetTop: "15vh", size: "small" },
-    { text: "interactive web", start: 0.50, peak: 0.56, targetTop: "25vh", size: "small" },
-    { text: "motion web design", start: 0.58, peak: 0.64, targetTop: "35vh", size: "small" },
-    { text: "immersive landing", start: 0.66, peak: 0.72, targetTop: "45vh", size: "small" },
-    { text: "cinematic storytelling", start: 0.74, peak: 0.80, targetTop: "55vh", size: "small" },
+    { text: "REZYAPKIN", start: 0.02, peak: 0.08, targetTop: "10vh", size: "hero" },
+    { text: ".", start: 0.10, peak: 0.14, targetTop: "25vh", size: "dot" },
+    { text: "creative", start: 0.16, peak: 0.22, targetTop: "33vh", size: "medium" },
+    { text: "technology", start: 0.24, peak: 0.30, targetTop: "43vh", size: "medium" },
+    { text: "AI dev", start: 0.32, peak: 0.38, targetTop: "55vh", size: "hero" },
+    // Services — right-aligned column, spaced apart
+    { text: "SCROLL-DRIVEN ANIMATION", start: 0.42, peak: 0.48, targetTop: "18vh", size: "service" },
+    { text: "INTERACTIVE WEB", start: 0.50, peak: 0.56, targetTop: "30vh", size: "service" },
+    { text: "MOTION WEB DESIGN", start: 0.58, peak: 0.64, targetTop: "42vh", size: "service" },
+    { text: "IMMERSIVE LANDING", start: 0.66, peak: 0.72, targetTop: "54vh", size: "service" },
+    { text: "CINEMATIC STORYTELLING", start: 0.74, peak: 0.80, targetTop: "66vh", size: "service" },
   ];
 
   // Contact info — appears at the very end
@@ -203,16 +203,18 @@ function TextLayer({ progress }: { progress: number }) {
         }
 
         const sizeClasses: Record<string, string> = {
-          hero: "text-6xl md:text-9xl lg:text-[10rem] tracking-[0.15em] md:tracking-[0.2em]",
-          dot: "text-8xl md:text-[10rem]",
-          medium: "text-3xl md:text-6xl lg:text-8xl tracking-[0.1em] md:tracking-[0.15em]",
-          small: "text-xl md:text-3xl lg:text-5xl tracking-[0.1em] md:tracking-[0.15em]",
+          hero: "text-6xl md:text-9xl lg:text-[10rem] tracking-[0.15em] md:tracking-[0.2em] font-[100]",
+          dot: "text-8xl md:text-[10rem] font-[100]",
+          medium: "text-3xl md:text-6xl lg:text-8xl tracking-[0.1em] md:tracking-[0.15em] font-[100]",
+          service: "text-2xl md:text-4xl lg:text-5xl tracking-[0.12em] md:tracking-[0.18em] font-[300]",
         };
+
+        const isService = section.size === "service";
 
         return (
           <div
             key={i}
-            className="absolute left-0 right-0 flex justify-center"
+            className={`absolute ${isService ? "right-6 md:right-16 flex justify-end" : "left-0 right-0 flex justify-center"}`}
             style={{
               top: section.targetTop,
               opacity,
@@ -220,9 +222,11 @@ function TextLayer({ progress }: { progress: number }) {
             }}
           >
             <span
-              className={`${sizeClasses[section.size] || sizeClasses.medium} font-[100] text-white`}
+              className={`${sizeClasses[section.size] || sizeClasses.medium} ${isService ? "text-white/90" : "text-white"}`}
               style={{
-                textShadow: "0 0 60px rgba(0,0,0,0.9), 0 0 120px rgba(0,0,0,0.5)",
+                textShadow: isService
+                  ? "0 0 40px rgba(255,255,255,0.3), 0 0 80px rgba(0,0,0,0.8)"
+                  : "0 0 60px rgba(0,0,0,0.9), 0 0 120px rgba(0,0,0,0.5)",
               }}
             >
               {section.text}
