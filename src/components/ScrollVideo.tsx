@@ -146,28 +146,61 @@ function ScrollHint({ progress }: { progress: number }) {
   );
 }
 
-/* ── Text: rises from bottom, stays in place ── */
+/* ── Text: stacks bottom to top, one line at a time ── */
 function TextLayer({ progress }: { progress: number }) {
-  // Each text appears at 'start', rises to its final 'target' position by 'peak', and stays
-  const sections = [
-    { text: "REZYAPKIN", start: 0.02, peak: 0.08, targetTop: "10vh", size: "hero" },
-    { text: ".", start: 0.10, peak: 0.14, targetTop: "25vh", size: "dot" },
-    { text: "creative", start: 0.16, peak: 0.22, targetTop: "33vh", size: "medium" },
-    { text: "technology", start: 0.24, peak: 0.30, targetTop: "43vh", size: "medium" },
-    { text: "AI dev", start: 0.32, peak: 0.38, targetTop: "55vh", size: "hero" },
-    // Services — right-aligned column, spaced apart
-    { text: "SCROLL-DRIVEN ANIMATION", start: 0.42, peak: 0.48, targetTop: "18vh", size: "service" },
-    { text: "INTERACTIVE WEB", start: 0.50, peak: 0.56, targetTop: "30vh", size: "service" },
-    { text: "MOTION WEB DESIGN", start: 0.58, peak: 0.64, targetTop: "42vh", size: "service" },
-    { text: "IMMERSIVE LANDING", start: 0.66, peak: 0.72, targetTop: "54vh", size: "service" },
-    { text: "CINEMATIC STORYTELLING", start: 0.74, peak: 0.80, targetTop: "66vh", size: "service" },
+  // Lines appear one by one, stacking upward from the bottom
+  const lines = [
+    { text: "REZYAPKIN", trigger: 0.04, size: "hero" },
+    { text: "creative", trigger: 0.12, size: "medium" },
+    { text: "technology", trigger: 0.20, size: "medium" },
+    { text: "AI dev", trigger: 0.28, size: "hero" },
+    { text: "SCROLL-DRIVEN ANIMATION", trigger: 0.38, size: "service" },
+    { text: "INTERACTIVE WEB", trigger: 0.46, size: "service" },
+    { text: "MOTION WEB DESIGN", trigger: 0.54, size: "service" },
+    { text: "IMMERSIVE LANDING", trigger: 0.62, size: "service" },
+    { text: "CINEMATIC STORYTELLING", trigger: 0.70, size: "service" },
   ];
 
-  // Contact info — appears at the very end
-  const contactOpacity = progress >= 0.88 ? Math.min(1, (progress - 0.88) / 0.08) : 0;
+  const contactOpacity = progress >= 0.82 ? Math.min(1, (progress - 0.82) / 0.08) : 0;
 
   return (
     <div className="fixed inset-0 z-10 pointer-events-none">
+      {/* Lines stacking from bottom up */}
+      <div className="absolute bottom-8 md:bottom-14 left-6 md:left-14 flex flex-col-reverse items-start gap-1">
+        {[...lines].reverse().map((line, i) => {
+          const appeared = progress >= line.trigger;
+          const entry = appeared
+            ? Math.min(1, (progress - line.trigger) / 0.05)
+            : 0;
+
+          const sizeClasses: Record<string, string> = {
+            hero: "text-5xl md:text-8xl lg:text-9xl tracking-[0.12em] font-[200]",
+            medium: "text-2xl md:text-5xl lg:text-7xl tracking-[0.08em] font-[100]",
+            service: "text-lg md:text-2xl lg:text-3xl tracking-[0.15em] font-[300]",
+          };
+
+          return (
+            <div
+              key={i}
+              style={{
+                opacity: entry,
+                transform: `translateY(${(1 - entry) * 40}px)`,
+                transition: "transform 0.3s ease-out, opacity 0.3s ease-out",
+              }}
+            >
+              <span
+                className={`${sizeClasses[line.size] || sizeClasses.medium} text-white`}
+                style={{
+                  textShadow: "0 0 40px rgba(0,0,0,0.9), 0 0 100px rgba(0,0,0,0.5)",
+                }}
+              >
+                {line.text}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+
       {/* Contact info — bottom center */}
       <div
         className="absolute bottom-6 md:bottom-10 left-0 right-0 flex flex-col items-center gap-2 pointer-events-auto"
@@ -184,56 +217,6 @@ function TextLayer({ progress }: { progress: number }) {
           @Digitkok
         </a>
       </div>
-
-      {sections.map((section, i) => {
-        let opacity = 0;
-        let yOffset = 100; // starts 100vh below (off-screen bottom)
-
-        if (progress >= section.start) {
-          if (progress <= section.peak) {
-            // Rising from bottom to target position
-            const t = (progress - section.start) / (section.peak - section.start);
-            opacity = t;
-            yOffset = 100 * (1 - t); // 100 → 0 (vh offset from target)
-          } else {
-            // Stays in place
-            opacity = 1;
-            yOffset = 0;
-          }
-        }
-
-        const sizeClasses: Record<string, string> = {
-          hero: "text-6xl md:text-9xl lg:text-[10rem] tracking-[0.15em] md:tracking-[0.2em] font-[100]",
-          dot: "text-8xl md:text-[10rem] font-[100]",
-          medium: "text-3xl md:text-6xl lg:text-8xl tracking-[0.1em] md:tracking-[0.15em] font-[100]",
-          service: "text-2xl md:text-4xl lg:text-5xl tracking-[0.12em] md:tracking-[0.18em] font-[300]",
-        };
-
-        const isService = section.size === "service";
-
-        return (
-          <div
-            key={i}
-            className={`absolute ${isService ? "right-6 md:right-16 flex justify-end" : "left-0 right-0 flex justify-center"}`}
-            style={{
-              top: section.targetTop,
-              opacity,
-              transform: `translateY(${yOffset}vh)`,
-            }}
-          >
-            <span
-              className={`${sizeClasses[section.size] || sizeClasses.medium} ${isService ? "text-white/90" : "text-white"}`}
-              style={{
-                textShadow: isService
-                  ? "0 0 40px rgba(255,255,255,0.3), 0 0 80px rgba(0,0,0,0.8)"
-                  : "0 0 60px rgba(0,0,0,0.9), 0 0 120px rgba(0,0,0,0.5)",
-              }}
-            >
-              {section.text}
-            </span>
-          </div>
-        );
-      })}
     </div>
   );
 }
