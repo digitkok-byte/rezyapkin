@@ -65,7 +65,7 @@ export default function ScrollVideo() {
   }, [ready]);
 
   return (
-    <div ref={containerRef} className="relative" style={{ height: "600vh" }}>
+    <div ref={containerRef} className="relative" style={{ height: "1200vh" }}>
       {/* Video background */}
       <video
         ref={videoRef}
@@ -150,15 +150,21 @@ function ScrollHint({ progress }: { progress: number }) {
 function TextLayer({ progress }: { progress: number }) {
   // Each text appears at 'start', rises to its final 'target' position by 'peak', and stays
   const sections = [
-    { text: "REZYAPKIN", start: 0.02, peak: 0.14, targetTop: "15vh" },
-    { text: ".", start: 0.18, peak: 0.30, targetTop: "38vh" },
-    { text: "creative", start: 0.34, peak: 0.46, targetTop: "48vh" },
-    { text: "technology", start: 0.50, peak: 0.62, targetTop: "58vh" },
-    { text: "AI dev", start: 0.66, peak: 0.80, targetTop: "72vh" },
+    { text: "REZYAPKIN", start: 0.02, peak: 0.08, targetTop: "12vh", size: "hero" },
+    { text: ".", start: 0.10, peak: 0.14, targetTop: "28vh", size: "dot" },
+    { text: "creative", start: 0.16, peak: 0.22, targetTop: "36vh", size: "medium" },
+    { text: "technology", start: 0.24, peak: 0.30, targetTop: "44vh", size: "medium" },
+    { text: "AI dev", start: 0.32, peak: 0.38, targetTop: "52vh", size: "hero" },
+    // Services
+    { text: "scroll-driven animation", start: 0.42, peak: 0.48, targetTop: "15vh", size: "small" },
+    { text: "interactive web", start: 0.50, peak: 0.56, targetTop: "25vh", size: "small" },
+    { text: "motion web design", start: 0.58, peak: 0.64, targetTop: "35vh", size: "small" },
+    { text: "immersive landing", start: 0.66, peak: 0.72, targetTop: "45vh", size: "small" },
+    { text: "cinematic storytelling", start: 0.74, peak: 0.80, targetTop: "55vh", size: "small" },
   ];
 
   // Contact info — appears at the very end
-  const contactOpacity = progress >= 0.85 ? Math.min(1, (progress - 0.85) / 0.1) : 0;
+  const contactOpacity = progress >= 0.88 ? Math.min(1, (progress - 0.88) / 0.08) : 0;
 
   return (
     <div className="fixed inset-0 z-10 pointer-events-none">
@@ -196,9 +202,12 @@ function TextLayer({ progress }: { progress: number }) {
           }
         }
 
-        const isTitle = i === 0;
-        const isAiDev = i === sections.length - 1;
-        const isDot = section.text === ".";
+        const sizeClasses: Record<string, string> = {
+          hero: "text-6xl md:text-9xl lg:text-[10rem] tracking-[0.15em] md:tracking-[0.2em]",
+          dot: "text-8xl md:text-[10rem]",
+          medium: "text-3xl md:text-6xl lg:text-8xl tracking-[0.1em] md:tracking-[0.15em]",
+          small: "text-xl md:text-3xl lg:text-5xl tracking-[0.1em] md:tracking-[0.15em]",
+        };
 
         return (
           <div
@@ -211,13 +220,7 @@ function TextLayer({ progress }: { progress: number }) {
             }}
           >
             <span
-              className={`
-                ${isTitle ? "text-6xl md:text-9xl lg:text-[10rem] tracking-[0.15em] md:tracking-[0.2em]" : ""}
-                ${isAiDev ? "text-6xl md:text-9xl lg:text-[10rem] tracking-[0.1em] md:tracking-[0.15em]" : ""}
-                ${isDot ? "text-8xl md:text-[10rem]" : ""}
-                ${!isTitle && !isAiDev && !isDot ? "text-3xl md:text-6xl lg:text-8xl tracking-[0.1em] md:tracking-[0.15em]" : ""}
-                font-[100] text-white
-              `}
+              className={`${sizeClasses[section.size] || sizeClasses.medium} font-[100] text-white`}
               style={{
                 textShadow: "0 0 60px rgba(0,0,0,0.9), 0 0 120px rgba(0,0,0,0.5)",
               }}
