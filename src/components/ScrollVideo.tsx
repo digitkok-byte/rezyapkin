@@ -174,8 +174,8 @@ function TextLayer({ progress }: { progress: number }) {
             : 0;
 
           const sizeClasses: Record<string, string> = {
-            hero: "text-5xl md:text-8xl lg:text-9xl tracking-[0.12em] font-[200]",
-            medium: "text-2xl md:text-5xl lg:text-7xl tracking-[0.08em] font-[100]",
+            hero: "text-5xl md:text-8xl lg:text-9xl tracking-[0.12em] font-[300]",
+            medium: "text-2xl md:text-5xl lg:text-7xl tracking-[0.08em] font-[300]",
             service: "text-lg md:text-2xl lg:text-3xl tracking-[0.15em] font-[300]",
           };
 
