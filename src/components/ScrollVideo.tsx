@@ -201,9 +201,9 @@ function TextLayer({ progress }: { progress: number }) {
         })}
       </div>
 
-      {/* Contact info — top right area */}
+      {/* Contact info — top right */}
       <div
-        className="absolute top-[30%] right-6 md:right-14 flex flex-col items-end gap-3 pointer-events-auto"
+        className="absolute top-6 md:top-10 right-6 md:right-14 flex flex-col items-end gap-3 pointer-events-auto"
         style={{
           opacity: contactOpacity,
           transform: `translateX(${(1 - contactOpacity) * 30}px)`,
@@ -213,14 +213,14 @@ function TextLayer({ progress }: { progress: number }) {
         <a
           href="tel:+79689774477"
           className="text-xl md:text-2xl font-[300] tracking-[0.12em] hover:opacity-100 transition-opacity"
-          style={{ color: "#8B2020", textShadow: "0 0 20px rgba(139,32,32,0.4)" }}
+          style={{ color: "#FFFFFF", textShadow: "0 0 15px rgba(255,255,255,0.8), 0 0 40px rgba(255,255,255,0.4), 0 0 80px rgba(255,255,255,0.2)" }}
         >
           +7 968 977-44-77
         </a>
         <a
           href="https://t.me/Digitkok"
           className="text-lg md:text-xl font-[300] tracking-[0.15em] hover:opacity-100 transition-opacity"
-          style={{ color: "#8B2020", opacity: 0.8, textShadow: "0 0 20px rgba(139,32,32,0.4)" }}
+          style={{ color: "#FFFFFF", textShadow: "0 0 15px rgba(255,255,255,0.8), 0 0 40px rgba(255,255,255,0.4), 0 0 80px rgba(255,255,255,0.2)" }}
         >
           @Digitkok
         </a>
