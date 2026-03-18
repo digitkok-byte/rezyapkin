@@ -201,12 +201,12 @@ function TextLayer({ progress }: { progress: number }) {
         })}
       </div>
 
-      {/* Contact info — bottom center */}
+      {/* Contact info — middle right */}
       <div
-        className="absolute bottom-6 md:bottom-10 left-0 right-0 flex flex-col items-center gap-2 pointer-events-auto"
+        className="absolute top-1/2 -translate-y-1/2 right-6 md:right-14 flex flex-col items-end gap-2 pointer-events-auto"
         style={{
           opacity: contactOpacity,
-          transform: `translateY(${(1 - contactOpacity) * 20}px)`,
+          transform: `translateY(-50%) translateX(${(1 - contactOpacity) * 20}px)`,
           transition: "transform 0.3s ease-out",
         }}
       >
